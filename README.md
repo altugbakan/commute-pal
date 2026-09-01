@@ -34,3 +34,5 @@ Command-line flags behind them:
 | `--dark` / `--light` | Force the theme instead of following Windows |
 
 Layout: `MainWindow.xaml` is the full app, `PopupWindow.xaml` the sign-in prompt, `Controls/MonthPicker.xaml` the date picker. Shared styles, icons and theme colours live in `Themes/`.
+
+Icons by [Lucide](https://lucide.dev) (ISC), see THIRD_PARTY_NOTICES.md.
