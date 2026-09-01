@@ -1,0 +1,143 @@
+<Window x:Class="CommutePal.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CommutePal"
+        Icon="Assets/bike.ico"
+        Width="400"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        FontSize="14"
+        Background="#FAFAFA">
+    <Window.Resources>
+        <Style x:Key="ModeButton" TargetType="Button">
+            <Setter Property="Height" Value="72"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#0078D4"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E5F1FB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StatLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
+        <Style x:Key="StatValue" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="StatHeader" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Foreground" Value="#666"/>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel Margin="16,14,16,14">
+        <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold" Margin="5,0,5,8"/>
+
+        <UniformGrid x:Name="ModeGrid" Columns="2" Rows="2">
+            <Button Style="{StaticResource ModeButton}" Tag="Bike" Click="ModeButton_Click">
+                <StackPanel>
+                    <TextBlock Text="🚲" FontSize="24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Bike" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ModeButton}" Tag="Car" Click="ModeButton_Click">
+                <StackPanel>
+                    <TextBlock Text="🚗" FontSize="24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Car" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ModeButton}" Tag="PublicTransport" Click="ModeButton_Click">
+                <StackPanel>
+                    <TextBlock Text="🚌" FontSize="24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Public transport" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ModeButton}" Tag="Home" Click="ModeButton_Click">
+                <StackPanel>
+                    <TextBlock Text="🏠" FontSize="24" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Home" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </UniformGrid>
+
+        <!-- Everything below is hidden in the sign-in popup. -->
+        <StackPanel x:Name="DetailsPanel" Margin="5,0,5,0">
+            <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8"
+                    Padding="14,10" Margin="0,14,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="ThisMonthHeader" Grid.Row="0" Grid.Column="1" Style="{StaticResource StatHeader}"/>
+                    <TextBlock x:Name="LastMonthHeader" Grid.Row="0" Grid.Column="2" Style="{StaticResource StatHeader}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="🚲  Bike" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="BikeThis" Grid.Row="1" Grid.Column="1" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="BikeLast" Grid.Row="1" Grid.Column="2" Style="{StaticResource StatValue}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="🚗  Car" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="CarThis" Grid.Row="2" Grid.Column="1" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="CarLast" Grid.Row="2" Grid.Column="2" Style="{StaticResource StatValue}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="🚌  Public transport" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="PtThis" Grid.Row="3" Grid.Column="1" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="PtLast" Grid.Row="3" Grid.Column="2" Style="{StaticResource StatValue}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="🏠  Home" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="HomeThis" Grid.Row="4" Grid.Column="1" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="HomeLast" Grid.Row="4" Grid.Column="2" Style="{StaticResource StatValue}"/>
+
+                    <Border Grid.Row="5" Grid.ColumnSpan="3" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="0,4,0,0"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Days" Style="{StaticResource StatLabel}" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="TotalThis" Grid.Row="5" Grid.Column="1" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="TotalLast" Grid.Row="5" Grid.Column="2" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
+                </Grid>
+            </Border>
+
+            <DockPanel Margin="0,12,0,0">
+                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <Hyperlink Click="OpenLog_Click">Open log folder</Hyperlink>
+                </TextBlock>
+                <CheckBox x:Name="StartupCheckBox" Content="Ask at sign-in" VerticalAlignment="Center"
+                          Checked="StartupCheckBox_Changed" Unchecked="StartupCheckBox_Changed"/>
+            </DockPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>
