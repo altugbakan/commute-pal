@@ -9,6 +9,12 @@ public partial class MainWindow
 {
     private bool _suppressCalendarEvent;
 
+    private void InitializeCalendar()
+    {
+        DateCalendar.DisplayDateEnd = _today.ToDateTime(TimeOnly.MinValue);
+        ((CalendarDayMarker)Resources["DayMarker"]).Log = _log;
+    }
+
     private void PrevDay_Click(object sender, RoutedEventArgs e) => SelectDate(_selectedDate.AddDays(-1));
 
     private void NextDay_Click(object sender, RoutedEventArgs e) => SelectDate(_selectedDate.AddDays(1));
@@ -21,6 +27,11 @@ public partial class MainWindow
         DateCalendar.DisplayDate = _selectedDate.ToDateTime(TimeOnly.MinValue);
         DateCalendar.SelectedDate = DateCalendar.DisplayDate;
         _suppressCalendarEvent = false;
+
+        // Re-apply the cell style so the logged-day dots reflect anything saved since the popup last opened.
+        var style = DateCalendar.CalendarDayButtonStyle;
+        DateCalendar.CalendarDayButtonStyle = null;
+        DateCalendar.CalendarDayButtonStyle = style;
 
         DatePopup.IsOpen = true;
     }

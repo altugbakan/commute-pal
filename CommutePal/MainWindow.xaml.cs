@@ -31,7 +31,7 @@ public partial class MainWindow : Window
         else
         {
             InitializeStartupCheckBox();
-            DateCalendar.DisplayDateEnd = _today.ToDateTime(TimeOnly.MinValue);
+            InitializeCalendar();
         }
 
         Refresh();
