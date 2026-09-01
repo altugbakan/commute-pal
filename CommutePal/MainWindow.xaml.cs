@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace CommutePal;
@@ -18,7 +19,7 @@ public partial class MainWindow : Window
     private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
     private bool _suppressStartupToggle;
 
-    /// <param name="compact">Sign-in popup: date + four buttons only, closes as soon as one is clicked.</param>
+    /// <param name="compact">Sign-in popup: four icons only, closes as soon as one is clicked.</param>
     public MainWindow(CommuteLog log, bool compact)
     {
         InitializeComponent();
@@ -28,8 +29,13 @@ public partial class MainWindow : Window
 
         if (compact)
         {
-            DetailsPanel.Visibility = Visibility.Collapsed;
+            FullPanel.Visibility = Visibility.Collapsed;
+            CompactPanel.Visibility = Visibility.Visible;
+
+            WindowStyle = WindowStyle.None;
+            SizeToContent = SizeToContent.WidthAndHeight;
             Topmost = true; // make sure the sign-in prompt is actually seen
+            ShowInTaskbar = false;
         }
         else
         {
@@ -65,13 +71,20 @@ public partial class MainWindow : Window
         Refresh();
     }
 
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        // The compact popup has no title bar, so Escape is the way to dismiss it without logging.
+        if (e.Key == Key.Escape)
+        {
+            Close();
+        }
+    }
+
     private void Refresh()
     {
-        var culture = CultureInfo.CurrentCulture;
-        DateText.Text = _today.ToString("dddd, d MMMM", culture);
-
         var todayMode = _log.Get(_today);
-        foreach (var button in ModeGrid.Children.OfType<Button>())
+        var buttons = ModeGrid.Children.OfType<Button>().Concat(CompactGrid.Children.OfType<Button>());
+        foreach (var button in buttons)
         {
             var isSelected = todayMode is not null && (string)button.Tag == todayMode.ToString();
             button.Background = isSelected ? SelectedBrush : DefaultBrush;
@@ -82,6 +95,9 @@ public partial class MainWindow : Window
         {
             return;
         }
+
+        var culture = CultureInfo.CurrentCulture;
+        DateText.Text = _today.ToString("dddd, d MMMM", culture);
 
         var thisMonth = new DateTime(_today.Year, _today.Month, 1);
         var lastMonth = thisMonth.AddMonths(-1);

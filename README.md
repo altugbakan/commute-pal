@@ -9,7 +9,7 @@ Tiny Windows app that asks how you commuted today and keeps monthly totals for t
 
 ## How it works
 
-- At sign-in, if today isn't logged yet, a small popup with four buttons appears: Bike, Car, Public transport, Home. Click one and it closes. If today is already logged, nothing appears.
+- At sign-in, if today isn't logged yet, a tiny popup with four icons appears (Bike, Car, Public transport, Home; hover for the name). Click one and it closes. Esc dismisses it without logging. If today is already logged, nothing appears.
 - Open the exe by hand to see this month and last month totals, change today's entry, or turn the sign-in prompt off.
 - Data is stored as one CSV per month in `%APPDATA%\CommutePal\` (e.g. `2026-08.csv`, rows of `date,mode`).
 

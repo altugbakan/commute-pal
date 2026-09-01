@@ -3,16 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="CommutePal"
         Icon="Assets/bike.ico"
-        Width="400"
+        Width="420"
         SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
         FontSize="14"
-        Background="#FAFAFA">
+        Background="#FAFAFA"
+        KeyDown="Window_KeyDown">
     <Window.Resources>
         <Style x:Key="ModeButton" TargetType="Button">
-            <Setter Property="Height" Value="72"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -41,6 +41,16 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="TileButton" TargetType="Button" BasedOn="{StaticResource ModeButton}">
+            <Setter Property="Height" Value="72"/>
+        </Style>
+        <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource ModeButton}">
+            <Setter Property="Width" Value="56"/>
+            <Setter Property="Height" Value="56"/>
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
+        </Style>
         <Style x:Key="StatLabel" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,3"/>
         </Style>
@@ -56,45 +66,55 @@
         </Style>
     </Window.Resources>
 
-    <StackPanel Margin="16,14,16,14">
-        <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold" Margin="5,0,5,8"/>
+    <Grid>
+        <!-- Sign-in popup: four icons, nothing else. -->
+        <Border x:Name="CompactPanel" Visibility="Collapsed" Background="#FAFAFA" Padding="6">
+            <StackPanel x:Name="CompactGrid" Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Tag="Bike" ToolTip="Bike" Content="🚲" Click="ModeButton_Click"/>
+                <Button Style="{StaticResource IconButton}" Tag="Car" ToolTip="Car" Content="🚗" Click="ModeButton_Click"/>
+                <Button Style="{StaticResource IconButton}" Tag="PublicTransport" ToolTip="Public transport" Content="🚌" Click="ModeButton_Click"/>
+                <Button Style="{StaticResource IconButton}" Tag="Home" ToolTip="Home" Content="🏠" Click="ModeButton_Click"/>
+            </StackPanel>
+        </Border>
 
-        <UniformGrid x:Name="ModeGrid" Columns="2" Rows="2">
-            <Button Style="{StaticResource ModeButton}" Tag="Bike" Click="ModeButton_Click">
-                <StackPanel>
-                    <TextBlock Text="🚲" FontSize="24" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Bike" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Style="{StaticResource ModeButton}" Tag="Car" Click="ModeButton_Click">
-                <StackPanel>
-                    <TextBlock Text="🚗" FontSize="24" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Car" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Style="{StaticResource ModeButton}" Tag="PublicTransport" Click="ModeButton_Click">
-                <StackPanel>
-                    <TextBlock Text="🚌" FontSize="24" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Public transport" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Style="{StaticResource ModeButton}" Tag="Home" Click="ModeButton_Click">
-                <StackPanel>
-                    <TextBlock Text="🏠" FontSize="24" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Home" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-        </UniformGrid>
+        <!-- Full view when the app is opened by hand. -->
+        <StackPanel x:Name="FullPanel" Margin="16,14,16,14">
+            <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold" Margin="5,0,5,8"/>
 
-        <!-- Everything below is hidden in the sign-in popup. -->
-        <StackPanel x:Name="DetailsPanel" Margin="5,0,5,0">
+            <UniformGrid x:Name="ModeGrid" Columns="2" Rows="2">
+                <Button Style="{StaticResource TileButton}" Tag="Bike" Click="ModeButton_Click">
+                    <StackPanel>
+                        <TextBlock Text="🚲" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Bike" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource TileButton}" Tag="Car" Click="ModeButton_Click">
+                    <StackPanel>
+                        <TextBlock Text="🚗" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Car" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource TileButton}" Tag="PublicTransport" Click="ModeButton_Click">
+                    <StackPanel>
+                        <TextBlock Text="🚌" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Public transport" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource TileButton}" Tag="Home" Click="ModeButton_Click">
+                    <StackPanel>
+                        <TextBlock Text="🏠" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Home" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </UniformGrid>
+
             <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8"
-                    Padding="14,10" Margin="0,14,0,0">
+                    Padding="14,10" Margin="5,14,5,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto" MinWidth="100"/>
-                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto" MinWidth="84"/>
+                        <ColumnDefinition Width="Auto" MinWidth="84"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -131,7 +151,7 @@
                 </Grid>
             </Border>
 
-            <DockPanel Margin="0,12,0,0">
+            <DockPanel Margin="5,12,5,0">
                 <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center">
                     <Hyperlink Click="OpenLog_Click">Open log folder</Hyperlink>
                 </TextBlock>
@@ -139,5 +159,5 @@
                           Checked="StartupCheckBox_Changed" Unchecked="StartupCheckBox_Changed"/>
             </DockPanel>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
