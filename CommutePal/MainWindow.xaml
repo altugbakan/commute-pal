@@ -9,15 +9,17 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
         FontSize="14"
-        Background="#FAFAFA"
+        Background="{DynamicResource WindowBg}"
+        Foreground="{DynamicResource TextPrimary}"
         KeyDown="Window_KeyDown">
     <Window.Resources>
         <Style x:Key="ModeButton" TargetType="Button">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -31,10 +33,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="#0078D4"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#E5F1FB"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardPressedBg}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -47,64 +49,92 @@
         <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource ModeButton}">
             <Setter Property="Width" Value="56"/>
             <Setter Property="Height" Value="56"/>
-            <Setter Property="FontSize" Value="26"/>
             <Setter Property="Margin" Value="4"/>
             <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
         </Style>
-        <Style x:Key="CloseButton" TargetType="Button">
-            <Setter Property="Width" Value="24"/>
-            <Setter Property="Height" Value="24"/>
-            <Setter Property="Margin" Value="4,0,0,0"/>
+        <!-- Borderless text/glyph button used for the close X, the day arrows, and the date itself. -->
+        <Style x:Key="FlatButton" TargetType="Button">
+            <Setter Property="Padding" Value="6,2"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Foreground" Value="#888"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="Transparent" CornerRadius="12">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#E8E8E8"/>
-                                <Setter Property="Foreground" Value="#333"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource FlatHoverBg}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.3"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style x:Key="ArrowButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
         <Style x:Key="StatLabel" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="Margin" Value="8,3,0,3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="StatIcon" TargetType="Viewbox">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="StatValue" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,3"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         <Style x:Key="StatHeader" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,0,0,6"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
         </Style>
     </Window.Resources>
 
     <Grid>
         <!-- Sign-in popup: four icons and a close button, drawn as a rounded card on a transparent window. -->
-        <Border x:Name="CompactPanel" Visibility="Collapsed" Background="#FAFAFA"
-                BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="16"
+        <Border x:Name="CompactPanel" Visibility="Collapsed" Background="{DynamicResource WindowBg}"
+                BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="16"
                 Padding="8,6,6,6" Margin="12"
                 MouseLeftButtonDown="CompactPanel_MouseLeftButtonDown">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Opacity="0.25"/>
+                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Opacity="0.3"/>
             </Border.Effect>
             <StackPanel Orientation="Horizontal">
                 <StackPanel x:Name="CompactGrid" Orientation="Horizontal">
-                    <Button Style="{StaticResource IconButton}" Tag="Bike" ToolTip="Bike" Content="🚲" Click="ModeButton_Click"/>
-                    <Button Style="{StaticResource IconButton}" Tag="Car" ToolTip="Car" Content="🚗" Click="ModeButton_Click"/>
-                    <Button Style="{StaticResource IconButton}" Tag="PublicTransport" ToolTip="Public transport" Content="🚌" Click="ModeButton_Click"/>
-                    <Button Style="{StaticResource IconButton}" Tag="Home" ToolTip="Home" Content="🏠" Click="ModeButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Tag="Bike" ToolTip="Bike" Click="ModeButton_Click">
+                        <Viewbox Width="28" Height="28"><Path Style="{StaticResource Icon}" Data="{StaticResource BikeIcon}"/></Viewbox>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Tag="Car" ToolTip="Car" Click="ModeButton_Click">
+                        <Viewbox Width="28" Height="28"><Path Style="{StaticResource Icon}" Data="{StaticResource CarIcon}"/></Viewbox>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Tag="PublicTransport" ToolTip="Public transport" Click="ModeButton_Click">
+                        <Viewbox Width="28" Height="28"><Path Style="{StaticResource Icon}" Data="{StaticResource BusIcon}"/></Viewbox>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Tag="Home" ToolTip="Home" Click="ModeButton_Click">
+                        <Viewbox Width="28" Height="28"><Path Style="{StaticResource Icon}" Data="{StaticResource HomeIcon}"/></Viewbox>
+                    </Button>
                 </StackPanel>
                 <Button Style="{StaticResource CloseButton}" ToolTip="Not now (Esc)" Content="✕" Click="Close_Click"/>
             </StackPanel>
@@ -112,39 +142,63 @@
 
         <!-- Full view when the app is opened by hand. -->
         <StackPanel x:Name="FullPanel" Margin="16,14,16,14">
-            <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold" Margin="5,0,5,8"/>
+
+            <!-- Day navigator: arrows step a day, clicking the date opens a calendar, "Today" jumps back. -->
+            <Grid Margin="5,0,5,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{StaticResource ArrowButton}" Content="‹" ToolTip="Previous day" Click="PrevDay_Click"/>
+                <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource FlatButton}" HorizontalAlignment="Left"
+                        Foreground="{DynamicResource TextPrimary}" ToolTip="Pick a date to backfill" Click="DateButton_Click">
+                    <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold"/>
+                </Button>
+                <Button x:Name="TodayButton" Grid.Column="2" Style="{StaticResource FlatButton}" Content="Today"
+                        FontSize="12" Margin="0,0,4,0" Click="Today_Click"/>
+                <Button x:Name="NextDayButton" Grid.Column="3" Style="{StaticResource ArrowButton}" Content="›" ToolTip="Next day" Click="NextDay_Click"/>
+                <Popup x:Name="DatePopup" PlacementTarget="{Binding ElementName=DateButton}" Placement="Bottom"
+                       StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                    <Border Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="8" Padding="4" Margin="0,4,0,0">
+                        <Calendar x:Name="DateCalendar" SelectedDatesChanged="DateCalendar_SelectedDatesChanged"/>
+                    </Border>
+                </Popup>
+            </Grid>
 
             <UniformGrid x:Name="ModeGrid" Columns="2" Rows="2">
                 <Button Style="{StaticResource TileButton}" Tag="Bike" Click="ModeButton_Click">
                     <StackPanel>
-                        <TextBlock Text="🚲" FontSize="24" HorizontalAlignment="Center"/>
+                        <Viewbox Width="26" Height="26" Margin="0,0,0,4"><Path Style="{StaticResource Icon}" Data="{StaticResource BikeIcon}"/></Viewbox>
                         <TextBlock Text="Bike" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource TileButton}" Tag="Car" Click="ModeButton_Click">
                     <StackPanel>
-                        <TextBlock Text="🚗" FontSize="24" HorizontalAlignment="Center"/>
+                        <Viewbox Width="26" Height="26" Margin="0,0,0,4"><Path Style="{StaticResource Icon}" Data="{StaticResource CarIcon}"/></Viewbox>
                         <TextBlock Text="Car" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource TileButton}" Tag="PublicTransport" Click="ModeButton_Click">
                     <StackPanel>
-                        <TextBlock Text="🚌" FontSize="24" HorizontalAlignment="Center"/>
+                        <Viewbox Width="26" Height="26" Margin="0,0,0,4"><Path Style="{StaticResource Icon}" Data="{StaticResource BusIcon}"/></Viewbox>
                         <TextBlock Text="Public transport" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource TileButton}" Tag="Home" Click="ModeButton_Click">
                     <StackPanel>
-                        <TextBlock Text="🏠" FontSize="24" HorizontalAlignment="Center"/>
+                        <Viewbox Width="26" Height="26" Margin="0,0,0,4"><Path Style="{StaticResource Icon}" Data="{StaticResource HomeIcon}"/></Viewbox>
                         <TextBlock Text="Home" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </UniformGrid>
 
-            <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8"
+            <Border Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="8"
                     Padding="14,10" Margin="5,14,5,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" MinWidth="84"/>
                         <ColumnDefinition Width="Auto" MinWidth="84"/>
@@ -158,29 +212,33 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="ThisMonthHeader" Grid.Row="0" Grid.Column="1" Style="{StaticResource StatHeader}"/>
-                    <TextBlock x:Name="LastMonthHeader" Grid.Row="0" Grid.Column="2" Style="{StaticResource StatHeader}"/>
+                    <TextBlock x:Name="ThisMonthHeader" Grid.Row="0" Grid.Column="2" Style="{StaticResource StatHeader}"/>
+                    <TextBlock x:Name="LastMonthHeader" Grid.Row="0" Grid.Column="3" Style="{StaticResource StatHeader}"/>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="🚲  Bike" Style="{StaticResource StatLabel}"/>
-                    <TextBlock x:Name="BikeThis" Grid.Row="1" Grid.Column="1" Style="{StaticResource StatValue}"/>
-                    <TextBlock x:Name="BikeLast" Grid.Row="1" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <Viewbox Grid.Row="1" Grid.Column="0" Style="{StaticResource StatIcon}"><Path Style="{StaticResource Icon}" Data="{StaticResource BikeIcon}"/></Viewbox>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Bike" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="BikeThis" Grid.Row="1" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="BikeLast" Grid.Row="1" Grid.Column="3" Style="{StaticResource StatValue}"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="🚗  Car" Style="{StaticResource StatLabel}"/>
-                    <TextBlock x:Name="CarThis" Grid.Row="2" Grid.Column="1" Style="{StaticResource StatValue}"/>
-                    <TextBlock x:Name="CarLast" Grid.Row="2" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <Viewbox Grid.Row="2" Grid.Column="0" Style="{StaticResource StatIcon}"><Path Style="{StaticResource Icon}" Data="{StaticResource CarIcon}"/></Viewbox>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Car" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="CarThis" Grid.Row="2" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="CarLast" Grid.Row="2" Grid.Column="3" Style="{StaticResource StatValue}"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="🚌  Public transport" Style="{StaticResource StatLabel}"/>
-                    <TextBlock x:Name="PtThis" Grid.Row="3" Grid.Column="1" Style="{StaticResource StatValue}"/>
-                    <TextBlock x:Name="PtLast" Grid.Row="3" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <Viewbox Grid.Row="3" Grid.Column="0" Style="{StaticResource StatIcon}"><Path Style="{StaticResource Icon}" Data="{StaticResource BusIcon}"/></Viewbox>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Public transport" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="PtThis" Grid.Row="3" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="PtLast" Grid.Row="3" Grid.Column="3" Style="{StaticResource StatValue}"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="🏠  Home" Style="{StaticResource StatLabel}"/>
-                    <TextBlock x:Name="HomeThis" Grid.Row="4" Grid.Column="1" Style="{StaticResource StatValue}"/>
-                    <TextBlock x:Name="HomeLast" Grid.Row="4" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <Viewbox Grid.Row="4" Grid.Column="0" Style="{StaticResource StatIcon}"><Path Style="{StaticResource Icon}" Data="{StaticResource HomeIcon}"/></Viewbox>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="Home" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="HomeThis" Grid.Row="4" Grid.Column="2" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="HomeLast" Grid.Row="4" Grid.Column="3" Style="{StaticResource StatValue}"/>
 
-                    <Border Grid.Row="5" Grid.ColumnSpan="3" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="0,4,0,0"/>
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Days" Style="{StaticResource StatLabel}" Margin="0,8,0,0"/>
-                    <TextBlock x:Name="TotalThis" Grid.Row="5" Grid.Column="1" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
-                    <TextBlock x:Name="TotalLast" Grid.Row="5" Grid.Column="2" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
+                    <Border Grid.Row="5" Grid.ColumnSpan="4" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Margin="0,4,0,0"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Days" Style="{StaticResource StatLabel}" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="TotalThis" Grid.Row="5" Grid.Column="2" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="TotalLast" Grid.Row="5" Grid.Column="3" Style="{StaticResource StatValue}" Margin="0,8,0,0"/>
                 </Grid>
             </Border>
 

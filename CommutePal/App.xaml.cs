@@ -1,4 +1,5 @@
 using System.Windows;
+using Microsoft.Win32;
 
 namespace CommutePal;
 
@@ -10,6 +11,8 @@ public partial class App : Application
 
         var launchedAtStartup = e.Args.Contains(StartupRegistration.StartupArg, StringComparer.OrdinalIgnoreCase);
         var firstRun = !CommuteLog.HasAnyData;
+
+        ApplyTheme(dark: ResolveDarkMode(e.Args));
 
         CommuteLog log;
         try
@@ -39,9 +42,35 @@ public partial class App : Application
             TryEnableStartup();
         }
 
-        // Sign-in launch gets the minimal four-button popup; a manual launch gets the full view.
+        // Sign-in launch gets the minimal icon popup; a manual launch gets the full view.
         MainWindow = new MainWindow(log, compact: launchedAtStartup);
         MainWindow.Show();
+    }
+
+    /// <summary>Follows the Windows "Choose your default app mode" setting. --dark / --light force it (handy for testing).</summary>
+    private static bool ResolveDarkMode(string[] args)
+    {
+        if (args.Contains("--dark", StringComparer.OrdinalIgnoreCase)) return true;
+        if (args.Contains("--light", StringComparer.OrdinalIgnoreCase)) return false;
+
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            return key?.GetValue("AppsUseLightTheme") is int useLight && useLight == 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private void ApplyTheme(bool dark)
+    {
+        var source = new Uri($"Themes/{(dark ? "Dark" : "Light")}.xaml", UriKind.Relative);
+        Resources.MergedDictionaries.Add(new ResourceDictionary { Source = source });
+
+        // The Fluent theme normally follows the OS on its own; forcing it keeps --dark/--light consistent.
+        ThemeMode = dark ? ThemeMode.Dark : ThemeMode.Light;
     }
 
     private static void TryEnableStartup()
