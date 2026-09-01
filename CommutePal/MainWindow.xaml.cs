@@ -32,7 +32,11 @@ public partial class MainWindow : Window
             FullPanel.Visibility = Visibility.Collapsed;
             CompactPanel.Visibility = Visibility.Visible;
 
+            // Borderless transparent window so the rounded card and its shadow are the whole UI.
             WindowStyle = WindowStyle.None;
+            AllowsTransparency = true;
+            Background = Brushes.Transparent;
+            ResizeMode = ResizeMode.NoResize;
             SizeToContent = SizeToContent.WidthAndHeight;
             Topmost = true; // make sure the sign-in prompt is actually seen
             ShowInTaskbar = false;
@@ -69,6 +73,17 @@ public partial class MainWindow : Window
         }
 
         Refresh();
+    }
+
+    private void Close_Click(object sender, RoutedEventArgs e) => Close();
+
+    private void CompactPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        // No title bar in the popup, so let the card itself be dragged.
+        if (e.ButtonState == MouseButtonState.Pressed)
+        {
+            DragMove();
+        }
     }
 
     private void Window_KeyDown(object sender, KeyEventArgs e)

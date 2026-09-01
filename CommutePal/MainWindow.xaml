@@ -51,6 +51,30 @@
             <Setter Property="Margin" Value="4"/>
             <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
         </Style>
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#888"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E8E8E8"/>
+                                <Setter Property="Foreground" Value="#333"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="StatLabel" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,3"/>
         </Style>
@@ -67,13 +91,22 @@
     </Window.Resources>
 
     <Grid>
-        <!-- Sign-in popup: four icons, nothing else. -->
-        <Border x:Name="CompactPanel" Visibility="Collapsed" Background="#FAFAFA" Padding="6">
-            <StackPanel x:Name="CompactGrid" Orientation="Horizontal">
-                <Button Style="{StaticResource IconButton}" Tag="Bike" ToolTip="Bike" Content="🚲" Click="ModeButton_Click"/>
-                <Button Style="{StaticResource IconButton}" Tag="Car" ToolTip="Car" Content="🚗" Click="ModeButton_Click"/>
-                <Button Style="{StaticResource IconButton}" Tag="PublicTransport" ToolTip="Public transport" Content="🚌" Click="ModeButton_Click"/>
-                <Button Style="{StaticResource IconButton}" Tag="Home" ToolTip="Home" Content="🏠" Click="ModeButton_Click"/>
+        <!-- Sign-in popup: four icons and a close button, drawn as a rounded card on a transparent window. -->
+        <Border x:Name="CompactPanel" Visibility="Collapsed" Background="#FAFAFA"
+                BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="16"
+                Padding="8,6,6,6" Margin="12"
+                MouseLeftButtonDown="CompactPanel_MouseLeftButtonDown">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Opacity="0.25"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel x:Name="CompactGrid" Orientation="Horizontal">
+                    <Button Style="{StaticResource IconButton}" Tag="Bike" ToolTip="Bike" Content="🚲" Click="ModeButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Tag="Car" ToolTip="Car" Content="🚗" Click="ModeButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Tag="PublicTransport" ToolTip="Public transport" Content="🚌" Click="ModeButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Tag="Home" ToolTip="Home" Content="🏠" Click="ModeButton_Click"/>
+                </StackPanel>
+                <Button Style="{StaticResource CloseButton}" ToolTip="Not now (Esc)" Content="✕" Click="Close_Click"/>
             </StackPanel>
         </Border>
 
