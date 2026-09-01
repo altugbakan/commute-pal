@@ -3,14 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace CommutePal;
 
-public enum CommuteMode
-{
-    Bike,
-    Car,
-    PublicTransport,
-    Home,
-}
-
 public sealed record MonthStats(int Bike, int Car, int PublicTransport, int Home)
 {
     public int Total => Bike + Car + PublicTransport + Home;

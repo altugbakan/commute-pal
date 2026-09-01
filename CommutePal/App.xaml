@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/Icons.xaml"/>
+                <ResourceDictionary Source="Themes/Styles.xaml"/>
                 <!-- Themes/Light.xaml or Themes/Dark.xaml is merged at startup based on the Windows setting. -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

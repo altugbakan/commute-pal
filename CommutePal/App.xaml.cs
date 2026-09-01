@@ -3,13 +3,20 @@ using Microsoft.Win32;
 
 namespace CommutePal;
 
+/// <summary>
+/// Command line:
+///   --startup   launched by Windows at sign-in: show the popup, or exit silently if today is logged
+///   --popup     always show the popup (for testing)
+///   --dark / --light   force the theme instead of following Windows (for testing)
+/// </summary>
 public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        var launchedAtStartup = e.Args.Contains(StartupRegistration.StartupArg, StringComparer.OrdinalIgnoreCase);
+        var launchedAtStartup = HasArg(e.Args, StartupRegistration.StartupArg);
+        var forcePopup = HasArg(e.Args, "--popup");
         var firstRun = !CommuteLog.HasAnyData;
 
         ApplyTheme(dark: ResolveDarkMode(e.Args));
@@ -29,29 +36,30 @@ public partial class App : Application
 
         var today = DateOnly.FromDateTime(DateTime.Today);
 
-        // Launched by Windows at sign-in and today is already logged: stay silent.
         if (launchedAtStartup && log.Get(today) is not null)
         {
-            Shutdown();
+            Shutdown(); // nothing to ask today
             return;
         }
 
-        // First time the app is opened by hand: register it to run at sign-in.
         if (firstRun && !launchedAtStartup)
         {
-            TryEnableStartup();
+            TryEnableStartup(); // first manual launch registers the sign-in prompt
         }
 
-        // Sign-in launch gets the minimal icon popup; a manual launch gets the full view.
-        MainWindow = new MainWindow(log, compact: launchedAtStartup);
+        MainWindow = launchedAtStartup || forcePopup
+            ? new PopupWindow(log)
+            : new MainWindow(log);
         MainWindow.Show();
     }
 
-    /// <summary>Follows the Windows "Choose your default app mode" setting. --dark / --light force it (handy for testing).</summary>
+    private static bool HasArg(string[] args, string name) =>
+        args.Contains(name, StringComparer.OrdinalIgnoreCase);
+
     private static bool ResolveDarkMode(string[] args)
     {
-        if (args.Contains("--dark", StringComparer.OrdinalIgnoreCase)) return true;
-        if (args.Contains("--light", StringComparer.OrdinalIgnoreCase)) return false;
+        if (HasArg(args, "--dark")) return true;
+        if (HasArg(args, "--light")) return false;
 
         try
         {
@@ -68,8 +76,6 @@ public partial class App : Application
     {
         var source = new Uri($"Themes/{(dark ? "Dark" : "Light")}.xaml", UriKind.Relative);
         Resources.MergedDictionaries.Add(new ResourceDictionary { Source = source });
-
-        // The Fluent theme normally follows the OS on its own; forcing it keeps --dark/--light consistent.
         ThemeMode = dark ? ThemeMode.Dark : ThemeMode.Light;
     }
 

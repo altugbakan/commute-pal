@@ -20,3 +20,17 @@ dotnet publish CommutePal/CommutePal.csproj -c Release -r win-x64 --self-contain
 ```
 
 Pushing a tag like `v1.0.1` builds the exe on GitHub Actions and attaches it to a release.
+
+## Development
+
+Visual Studio launch profiles (the dropdown next to Run): **CommutePal** (follows Windows theme), **Dark**, **Light**, **Popup (dark)**, **Popup (light)**.
+
+Command-line flags behind them:
+
+| Flag | Effect |
+|------|--------|
+| `--startup` | What the sign-in registration uses: show the popup, or exit silently if today is logged |
+| `--popup` | Always show the popup (testing) |
+| `--dark` / `--light` | Force the theme instead of following Windows |
+
+Layout: `MainWindow.xaml` is the full app, `PopupWindow.xaml` the sign-in prompt, `Controls/MonthPicker.xaml` the date picker. Shared styles, icons and theme colours live in `Themes/`.

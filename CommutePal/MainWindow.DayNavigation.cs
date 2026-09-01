@@ -1,18 +1,14 @@
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace CommutePal;
 
-/// <summary>Stepping between days and picking a date from the calendar, so past days can be backfilled.</summary>
+/// <summary>Stepping between days and picking one from the month picker, so past days can be backfilled.</summary>
 public partial class MainWindow
 {
-    private bool _suppressCalendarEvent;
-
-    private void InitializeCalendar()
+    private void InitializePicker()
     {
-        DateCalendar.DisplayDateEnd = _today.ToDateTime(TimeOnly.MinValue);
-        ((CalendarDayMarker)Resources["DayMarker"]).Log = _log;
+        Picker.MaxDate = _today;
+        Picker.DayLookup = _log.Get;
     }
 
     private void PrevDay_Click(object sender, RoutedEventArgs e) => SelectDate(_selectedDate.AddDays(-1));
@@ -23,29 +19,14 @@ public partial class MainWindow
 
     private void DateButton_Click(object sender, RoutedEventArgs e)
     {
-        _suppressCalendarEvent = true;
-        DateCalendar.DisplayDate = _selectedDate.ToDateTime(TimeOnly.MinValue);
-        DateCalendar.SelectedDate = DateCalendar.DisplayDate;
-        _suppressCalendarEvent = false;
-
-        // Re-apply the cell style so the logged-day dots reflect anything saved since the popup last opened.
-        var style = DateCalendar.CalendarDayButtonStyle;
-        DateCalendar.CalendarDayButtonStyle = null;
-        DateCalendar.CalendarDayButtonStyle = style;
-
+        Picker.ShowDate(_selectedDate); // also redraws the markers for anything logged since it was last open
         DatePopup.IsOpen = true;
     }
 
-    private void DateCalendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+    private void Picker_DateSelected(object? sender, DateOnly date)
     {
-        if (_suppressCalendarEvent || DateCalendar.SelectedDate is not { } picked)
-        {
-            return;
-        }
-
         DatePopup.IsOpen = false;
-        Mouse.Capture(null); // WPF's Calendar keeps mouse capture after a click, which would eat the next click
-        SelectDate(DateOnly.FromDateTime(picked));
+        SelectDate(date);
     }
 
     private void SelectDate(DateOnly date)

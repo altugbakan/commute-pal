@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "CommutePal": {
+      "commandName": "Project"
+    },
+    "Dark": {
+      "commandName": "Project",
+      "commandLineArgs": "--dark"
+    },
+    "Light": {
+      "commandName": "Project",
+      "commandLineArgs": "--light"
+    },
+    "Popup (dark)": {
+      "commandName": "Project",
+      "commandLineArgs": "--popup --dark"
+    },
+    "Popup (light)": {
+      "commandName": "Project",
+      "commandLineArgs": "--popup --light"
+    }
+  }
+}
