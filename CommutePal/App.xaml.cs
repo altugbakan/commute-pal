@@ -17,7 +17,6 @@ public partial class App : Application
 
         var launchedAtStartup = HasArg(e.Args, StartupRegistration.StartupArg);
         var forcePopup = HasArg(e.Args, "--popup");
-        var firstRun = !CommuteLog.HasAnyData;
 
         ApplyTheme(dark: ResolveDarkMode(e.Args));
 
@@ -42,14 +41,16 @@ public partial class App : Application
             return;
         }
 
-        if (firstRun && !launchedAtStartup)
+        var showPopup = launchedAtStartup || forcePopup;
+
+        if (!showPopup)
         {
-            TryEnableStartup(); // first manual launch registers the sign-in prompt
+            // If the exe was moved since the sign-in prompt was enabled, drop the dead entry.
+            // The checkbox then shows unticked and the user can enable it again from the new location.
+            TryRemoveStaleStartup();
         }
 
-        MainWindow = launchedAtStartup || forcePopup
-            ? new PopupWindow(log)
-            : new MainWindow(log);
+        MainWindow = showPopup ? new PopupWindow(log) : new MainWindow(log);
         MainWindow.Show();
     }
 
@@ -79,15 +80,15 @@ public partial class App : Application
         ThemeMode = dark ? ThemeMode.Dark : ThemeMode.Light;
     }
 
-    private static void TryEnableStartup()
+    private static void TryRemoveStaleStartup()
     {
         try
         {
-            StartupRegistration.Enable();
+            StartupRegistration.RemoveIfStale();
         }
         catch
         {
-            // Not fatal; the user can toggle it from the checkbox later.
+            // Not fatal; the checkbox will still reflect the real state.
         }
     }
 }

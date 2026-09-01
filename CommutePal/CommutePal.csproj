@@ -9,7 +9,7 @@
     <ApplicationIcon>Assets\bike.ico</ApplicationIcon>
     <AssemblyName>CommutePal</AssemblyName>
     <RootNamespace>CommutePal</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>

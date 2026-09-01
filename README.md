@@ -5,7 +5,8 @@ Tiny Windows app that asks how you commuted today and keeps monthly totals for t
 ## Install
 
 1. Download `CommutePal.exe` from the latest [release](../../releases/latest) and put it somewhere permanent (e.g. `C:\Tools\CommutePal\`).
-2. Run it once. It registers itself to open at Windows sign-in.
+2. Run it and tick **Ask at sign-in**. Nothing is registered until you do.
+3. If you later move the exe, the app notices on the next launch, removes the old sign-in entry and unticks the box. Tick it again from the new location.
 
 ## How it works
 
