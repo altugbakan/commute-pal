@@ -70,6 +70,14 @@ public sealed partial class CommuteLog
         SaveMonth(date.Year, date.Month);
     }
 
+    public void Remove(DateOnly date)
+    {
+        if (_entries.Remove(date))
+        {
+            SaveMonth(date.Year, date.Month);
+        }
+    }
+
     public MonthStats StatsFor(int year, int month)
     {
         var inMonth = EntriesIn(year, month).Select(e => e.Value).ToList();
@@ -91,13 +99,20 @@ public sealed partial class CommuteLog
 
     private void SaveMonth(int year, int month)
     {
-        System.IO.Directory.CreateDirectory(Directory);
+        var target = FileFor(year, month);
 
         var lines = new List<string> { Header };
         lines.AddRange(EntriesIn(year, month).Select(e => $"{e.Key.ToString(DateFormat)},{e.Value}"));
 
+        if (lines.Count == 1)
+        {
+            File.Delete(target); // last entry of the month removed: no point keeping an empty file
+            return;
+        }
+
+        System.IO.Directory.CreateDirectory(Directory);
+
         // Write to a temp file first so a crash mid-write cannot truncate the month.
-        var target = FileFor(year, month);
         var tmp = target + ".tmp";
         File.WriteAllLines(tmp, lines);
         File.Move(tmp, target, overwrite: true);

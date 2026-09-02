@@ -33,7 +33,15 @@ public partial class MainWindow : Window
 
         try
         {
-            _log.Set(_selectedDate, mode);
+            // Clicking the mode that's already logged clears the day; anything else sets it.
+            if (_log.Get(_selectedDate) == mode)
+            {
+                _log.Remove(_selectedDate);
+            }
+            else
+            {
+                _log.Set(_selectedDate, mode);
+            }
         }
         catch (Exception ex)
         {
